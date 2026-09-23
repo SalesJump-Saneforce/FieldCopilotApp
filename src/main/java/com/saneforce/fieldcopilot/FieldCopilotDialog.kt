@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -34,6 +35,9 @@ class FieldCopilotDialog : DialogFragment() {
         dialog.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setWindowAnimations(R.style.fieldcopilot_DialogAnimation)
+            // Keep the WebView visible above the soft keyboard when the user
+            // types, so the input box is never hidden behind the IME.
+            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
         dialog.setCancelable(true)
         // Hardware back walks the chat history before closing the window.

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="fieldcopilot_accent">#1997CE</color>
+    <color name="fieldcopilot_surface">#FFFFFF</color>
+
+    <dimen name="fieldcopilot_fab_margin">16dp</dimen>
+
+    <string name="fieldcopilot_title">Field Copilot</string>
+    <string name="fieldcopilot_close">Close chat</string>
+
+    <style name="fieldcopilot_DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/fieldcopilot_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/fieldcopilot_slide_down</item>
+    </style>
+
+</resources>

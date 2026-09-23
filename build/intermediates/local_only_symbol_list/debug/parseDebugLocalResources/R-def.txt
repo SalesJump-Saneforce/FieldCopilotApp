@@ -1,0 +1,18 @@
+R_DEF: Internal format may change without notice
+local
+anim fieldcopilot_slide_down
+anim fieldcopilot_slide_up
+color fieldcopilot_accent
+color fieldcopilot_surface
+dimen fieldcopilot_fab_margin
+drawable fieldcopilot_bg_dialog
+drawable fieldcopilot_bg_header
+drawable fieldcopilot_ic_bot
+drawable fieldcopilot_ic_close
+id iv_close
+id progress_bar
+id web_view
+layout fieldcopilot_dialog
+string fieldcopilot_close
+string fieldcopilot_title
+style fieldcopilot_DialogAnimation

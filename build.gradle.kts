@@ -1,14 +1,21 @@
 // Self-contained AI chatbot (Field Copilot) module.
-// Drop this folder into any project, add `include(":fieldcopilot")` in settings.gradle
-// and `implementation(project(":fieldcopilot"))` in the app module.
+// - Standalone (this repo): publishes the AAR via ./gradlew publish (GitHub
+//   Packages) or publishToMavenLocal (JitPack). Plugin versions are pinned here
+//   so the module builds by itself.
+// - Dropped into a host project: the host usually applies its own AGP/Kotlin;
+//   if the versions below clash with the host's, omit the "version" on the two
+//   plugin IDs and let the host supply them.
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("com.android.library") version "8.11.1"
+    id("org.jetbrains.kotlin.android") version "2.0.21"
     id("maven-publish")
 }
 
-group = "com.saneforce.fieldcopilot"
-version = providers.gradleProperty("fieldcopilotVersion").getOrElse("1.0.0")
+// JitPack overrides these with -Pgroup / -Pversion; otherwise default to the
+// GitHub Packages coordinates below.
+group = providers.gradleProperty("group").getOrElse("com.saneforce.fieldcopilot")
+version = providers.gradleProperty("version")
+    .getOrElse(providers.gradleProperty("fieldcopilotVersion").getOrElse("1.0.0"))
 
 afterEvaluate {
     publishing {

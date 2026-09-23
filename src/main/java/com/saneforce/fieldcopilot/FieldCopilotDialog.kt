@@ -94,6 +94,7 @@ class FieldCopilotDialog : DialogFragment() {
 
             override fun onPageFinished(view: WebView, url: String?) {
                 _binding?.progressBar?.isVisible = false
+                injectKeyboardScrollHelper()
             }
         }
         binding.webView.webChromeClient = object : WebChromeClient() {
@@ -104,6 +105,16 @@ class FieldCopilotDialog : DialogFragment() {
                 }
             }
         }
+    }
+
+    /**
+     * The chatbot page uses a full-height layout, so when the soft keyboard
+     * opens the focused input can sit behind it. This helper listens to the
+     * on-screen keyboard's viewport resize and scrolls the focused input into
+     * view. Works on both Android and iOS WebView cores.
+     */
+    private fun injectKeyboardScrollHelper() {
+        binding.webView.evaluateJavascript(KEYBOARD_SCROLL_JS, null)
     }
 
     override fun onStart() {
@@ -133,6 +144,32 @@ class FieldCopilotDialog : DialogFragment() {
     companion object {
         internal const val TAG = "FieldCopilotDialog"
         private const val ARG_URL = "arg_url"
+
+        /**
+         * Scrolls the focused input into view whenever the visual viewport
+         * shrinks (i.e. the soft keyboard opens), and pads the body a little
+         * so the input never sits behind the keyboard.
+         */
+        private const val KEYBOARD_SCROLL_JS =
+            "(function(){" +
+            "  var vp = window.visualViewport;" +
+            "  if(!vp) return;" +
+            "  var SPACER_ID = '__fieldcopilot_keyboard_spacer__';" +
+            "  function getSpacer(){" +
+            "    var s = document.getElementById(SPACER_ID);" +
+            "    if(!s){ s = document.createElement('div'); s.id = SPACER_ID; s.style.height='0px'; document.body.appendChild(s); }" +
+            "    return s;" +
+            "  }" +
+            "  function adjust(){" +
+            "    var delta = vp.height - window.innerHeight;" +
+            "    getSpacer().style.height  = (Math.max(delta,0) + 'px');" +
+            "    var active = document.activeElement;" +
+            "    if(active && active.scrollIntoView){ active.scrollIntoView({block:'nearest', inline:'nearest'}); }" +
+            "  }" +
+            "  window.addEventListener('resize', adjust, true);" +
+            "  vp.addEventListener('resize', adjust);" +
+            "  vp.addEventListener('scroll', adjust);" +
+            "})()"
 
         internal fun newInstance(config: FieldCopilotConfig) = FieldCopilotDialog().apply {
             arguments = Bundle().apply { putString(ARG_URL, config.buildUrl()) }

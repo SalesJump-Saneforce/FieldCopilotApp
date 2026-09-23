@@ -9,6 +9,30 @@ public final class FieldCopilotViewController: UIViewController {
     private let webView = WKWebView(frame: .zero, configuration: WKWebViewConfiguration())
     private let progressView = UIProgressView(progressViewStyle: .default)
 
+    /// Scrolls the focused input into view when the on-screen keyboard shrinks
+    /// the visual viewport, so the typed value never sits behind the keyboard.
+    private static let keyboardScrollJS = """
+    (function(){
+      var vp = window.visualViewport;
+      if(!vp) return;
+      var SPACER_ID = '__fieldcopilot_keyboard_spacer__';
+      function getSpacer(){
+        var s = document.getElementById(SPACER_ID);
+        if(!s){ s = document.createElement('div'); s.id = SPACER_ID; s.style.height='0px'; document.body.appendChild(s); }
+        return s;
+      }
+      function adjust(){
+        var delta = vp.height - window.innerHeight;
+        getSpacer().style.height = (Math.max(delta,0) + 'px');
+        var active = document.activeElement;
+        if(active && active.scrollIntoView){ active.scrollIntoView({block:'nearest', inline:'nearest'}); }
+      }
+      window.addEventListener('resize', adjust, true);
+      vp.addEventListener('resize', adjust);
+      vp.addEventListener('scroll', adjust);
+    })()
+    """
+
     public init(config: FieldCopilotConfig) {
         self.config = config
         super.init(nibName: nil, bundle: nil)
@@ -107,6 +131,10 @@ public final class FieldCopilotViewController: UIViewController {
 }
 
 extension FieldCopilotViewController: WKNavigationDelegate {
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        _ = webView.evaluateJavaScript(Self.keyboardScrollJS, completionHandler: nil)
+    }
+
     public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
                         withError error: Error) {
         progressView.setProgress(1, animated: true)

@@ -3,7 +3,6 @@ package com.saneforce.fieldcopilot
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Color
-import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.KeyEvent
@@ -120,32 +119,11 @@ class FieldCopilotDialog : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        // Keep the popup resized so it always sits ABOVE the keyboard. Rather
-        // than relying on the host activity's soft-input mode (which can be
-        // adjustPan/adjustNothing), we size the window against the area that is
-        // actually visible (getWindowVisibleDisplayFrame already excludes the
-        // keyboard), so opening the IME shrinks the popup instead of covering it.
-        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        fitAboveKeyboard()
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener(fitAboveKeyboard)
-    }
-
-    /** Last applied size, used to avoid re-running setLayout every layout pass. */
-    private var lastFitWidth = 0
-    private var lastFitHeight = 0
-
-    private fun fitAboveKeyboard() {
-        val window = dialog?.window ?: return
-        val root = binding.root
-        val visible = Rect()
-        root.getWindowVisibleDisplayFrame(visible)
-        val w = (visible.width() * 0.94f).toInt()
-        val h = (visible.height() * 0.80f).toInt()
-        if (w != lastFitWidth || h != lastFitHeight) {
-            lastFitWidth = w
-            lastFitHeight = h
-            window.setLayout(w, h)
-        }
+        val metrics = resources.displayMetrics
+        dialog?.window?.setLayout(
+            (metrics.widthPixels * 0.94f).toInt(),
+            (metrics.heightPixels * 0.80f).toInt()
+        )
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -154,7 +132,6 @@ class FieldCopilotDialog : DialogFragment() {
     }
 
     override fun onDestroyView() {
-        binding.root.viewTreeObserver.removeOnGlobalLayoutListener(fitAboveKeyboard)
         binding.webView.apply {
             (parent as? ViewGroup)?.removeView(this)
             stopLoading()

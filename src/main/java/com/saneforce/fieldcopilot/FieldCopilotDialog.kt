@@ -107,12 +107,7 @@ class FieldCopilotDialog : DialogFragment() {
         }
     }
 
-    /**
-     * The chatbot page uses a full-height layout, so when the soft keyboard
-     * opens the focused input can sit behind it. This helper listens to the
-     * on-screen keyboard's viewport resize and scrolls the focused input into
-     * view. Works on both Android and iOS WebView cores.
-     */
+    /** Scroll the active HTML field into the visible WebView viewport as the IME opens. */
     private fun injectKeyboardScrollHelper() {
         binding.webView.evaluateJavascript(KEYBOARD_SCROLL_JS, null)
     }
@@ -146,29 +141,27 @@ class FieldCopilotDialog : DialogFragment() {
         private const val ARG_URL = "arg_url"
 
         /**
-         * Scrolls the focused input into view whenever the visual viewport
-         * shrinks (i.e. the soft keyboard opens), and pads the body a little
-         * so the input never sits behind the keyboard.
+         * Keep a focused HTML control in the visible viewport while Android
+         * resizes the dialog for the IME. No spacer or body padding is added,
+         * so hiding the keyboard restores the page without leftover space.
          */
         private const val KEYBOARD_SCROLL_JS =
             "(function(){" +
             "  var vp = window.visualViewport;" +
-            "  if(!vp) return;" +
-            "  var SPACER_ID = '__fieldcopilot_keyboard_spacer__';" +
-            "  function getSpacer(){" +
-            "    var s = document.getElementById(SPACER_ID);" +
-            "    if(!s){ s = document.createElement('div'); s.id = SPACER_ID; s.style.height='0px'; document.body.appendChild(s); }" +
-            "    return s;" +
-            "  }" +
+            "  var queued = false;" +
             "  function adjust(){" +
-            "    var delta = vp.height - window.innerHeight;" +
-            "    getSpacer().style.height  = (Math.max(delta,0) + 'px');" +
+            "    queued = false;" +
             "    var active = document.activeElement;" +
-            "    if(active && active.scrollIntoView){ active.scrollIntoView({block:'nearest', inline:'nearest'}); }" +
+            "    if(!active || !active.scrollIntoView || !/^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)) return;" +
+            "    var rect = active.getBoundingClientRect();" +
+            "    var top = vp ? vp.offsetTop : 0;" +
+            "    var bottom = top + (vp ? vp.height : window.innerHeight);" +
+            "    if(rect.bottom > bottom || rect.top < top){ active.scrollIntoView({block:'nearest', inline:'nearest'}); }" +
             "  }" +
-            "  window.addEventListener('resize', adjust, true);" +
-            "  vp.addEventListener('resize', adjust);" +
-            "  vp.addEventListener('scroll', adjust);" +
+            "  function schedule(){ if(!queued){ queued = true; window.setTimeout(adjust, 100); } }" +
+            "  document.addEventListener('focusin', schedule, true);" +
+            "  window.addEventListener('resize', schedule);" +
+            "  if(vp){ vp.addEventListener('resize', schedule); vp.addEventListener('scroll', schedule); }" +
             "})()"
 
         internal fun newInstance(config: FieldCopilotConfig) = FieldCopilotDialog().apply {

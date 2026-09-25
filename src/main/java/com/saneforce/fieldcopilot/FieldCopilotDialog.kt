@@ -115,10 +115,15 @@ class FieldCopilotDialog : DialogFragment() {
     override fun onStart() {
         super.onStart()
         val metrics = resources.displayMetrics
-        dialog?.window?.setLayout(
-            (metrics.widthPixels * 0.94f).toInt(),
-            (metrics.heightPixels * 0.80f).toInt()
-        )
+        dialog?.window?.apply {
+            // Apply after the dialog is attached as well; some devices reset
+            // the soft-input mode while showing a Dialog window.
+            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+            setLayout(
+                (metrics.widthPixels * 0.94f).toInt(),
+                (metrics.heightPixels * 0.80f).toInt()
+            )
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -141,9 +146,9 @@ class FieldCopilotDialog : DialogFragment() {
         private const val ARG_URL = "arg_url"
 
         /**
-         * Keep a focused HTML control in the visible viewport while Android
-         * resizes the dialog for the IME. No spacer or body padding is added,
-         * so hiding the keyboard restores the page without leftover space.
+         * Keep a focused HTML control (including custom contenteditable chat
+         * boxes) in the visible viewport while Android resizes the dialog for
+         * the IME. No spacer or body padding is added.
          */
         private const val KEYBOARD_SCROLL_JS =
             "(function(){" +
@@ -152,11 +157,13 @@ class FieldCopilotDialog : DialogFragment() {
             "  function adjust(){" +
             "    queued = false;" +
             "    var active = document.activeElement;" +
-            "    if(!active || !active.scrollIntoView || !/^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)) return;" +
+            "    if(!active || !active.scrollIntoView) return;" +
+            "    var editable = /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName) || active.isContentEditable || active.getAttribute('role') === 'textbox';" +
+            "    if(!editable) return;" +
             "    var rect = active.getBoundingClientRect();" +
             "    var top = vp ? vp.offsetTop : 0;" +
             "    var bottom = top + (vp ? vp.height : window.innerHeight);" +
-            "    if(rect.bottom > bottom || rect.top < top){ active.scrollIntoView({block:'nearest', inline:'nearest'}); }" +
+            "    if(rect.bottom > bottom || rect.top < top){ active.scrollIntoView({block:'center', inline:'nearest'}); }" +
             "  }" +
             "  function schedule(){ if(!queued){ queued = true; window.setTimeout(adjust, 100); } }" +
             "  document.addEventListener('focusin', schedule, true);" +

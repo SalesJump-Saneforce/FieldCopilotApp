@@ -4,7 +4,7 @@ Self-contained module that shows the SalesJump AI chatbot
 (`FieldCopilotApp.aspx`) in a floating chat window.
 
 - **Android**: Kotlin library that renders the chat in a `WebView`
-  (`DialogFragment`) — on both phones above the soft keyboard.
+  (`Activity`) — on both phones above the soft keyboard.
 - **iOS**: native `WKWebView` wrapper (see `ios/`).
 
 ---
@@ -103,7 +103,7 @@ You own FAB in XML, then:
 ```kotlin
 binding.fabFieldCopilot.setOnClickListener {
     FieldCopilot.show(
-        childFragmentManager,
+        requireActivity(),
         FieldCopilotConfig(sfCode="...", divCode="...", sfName="...")
     )
 }
@@ -111,7 +111,7 @@ binding.fabFieldCopilot.setOnClickListener {
 
 Or inject a ready-made FAB with zero layout changes:
 ```kotlin
-FieldCopilot.addFabTo(binding.root, supportFragmentManager) {
+FieldCopilot.addFabTo(binding.root, this) {
     FieldCopilotConfig(sfCode="...", divCode="...", sfName="...")
 }
 ```

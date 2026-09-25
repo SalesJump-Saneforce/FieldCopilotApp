@@ -3,4 +3,13 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <application>
+        <activity
+            android:name=".FieldCopilotDialog"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@style/fieldcopilot_ActivityTheme"
+            android:windowSoftInputMode="adjustResize" />
+    </application>
+
 </manifest>

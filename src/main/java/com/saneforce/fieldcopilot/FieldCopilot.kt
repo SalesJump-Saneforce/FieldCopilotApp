@@ -1,11 +1,12 @@
 package com.saneforce.fieldcopilot
 
+import android.app.Activity
+import android.content.Intent
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 /**
@@ -17,11 +18,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
  */
 object FieldCopilot {
 
-    /** Opens the floating chat window (no-op if it is already showing). */
-    fun show(fragmentManager: FragmentManager, config: FieldCopilotConfig) {
-        if (fragmentManager.findFragmentByTag(FieldCopilotDialog.TAG) == null) {
-            FieldCopilotDialog.newInstance(config).show(fragmentManager, FieldCopilotDialog.TAG)
-        }
+    /** Opens Field Copilot in its own Activity. */
+    fun show(activity: Activity, config: FieldCopilotConfig) {
+        activity.startActivity(
+            Intent(activity, FieldCopilotDialog::class.java)
+                .putExtra(FieldCopilotDialog.EXTRA_URL, config.buildUrl())
+        )
     }
 
     /**
@@ -31,7 +33,7 @@ object FieldCopilot {
      */
     fun addFabTo(
         container: ViewGroup,
-        fragmentManager: FragmentManager,
+        activity: Activity,
         configProvider: () -> FieldCopilotConfig,
     ): FloatingActionButton {
         val context = container.context
@@ -60,7 +62,7 @@ object FieldCopilot {
                 Gravity.BOTTOM or Gravity.END
             ).apply { setMargins(margin, margin, margin, margin) }
         }
-        fab.setOnClickListener { show(fragmentManager, configProvider()) }
+        fab.setOnClickListener { show(activity, configProvider()) }
         container.addView(fab, params)
         return fab
     }

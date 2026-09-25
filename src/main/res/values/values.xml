@@ -14,4 +14,9 @@
         <item name="android:windowExitAnimation">@anim/fieldcopilot_slide_down</item>
     </style>
 
+    <style name="fieldcopilot_ActivityTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+
 </resources>

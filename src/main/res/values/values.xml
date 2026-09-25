@@ -8,6 +8,7 @@
 
     <string name="fieldcopilot_title">Field Copilot</string>
     <string name="fieldcopilot_close">Close chat</string>
+    <string name="fieldcopilot_back">Back</string>
 
     <style name="fieldcopilot_DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/fieldcopilot_slide_up</item>

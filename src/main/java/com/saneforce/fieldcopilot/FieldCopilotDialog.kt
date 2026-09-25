@@ -10,6 +10,9 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.saneforce.fieldcopilot.databinding.FieldcopilotDialogBinding
 
@@ -20,9 +23,12 @@ class FieldCopilotDialog : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        window.statusBarColor = getColor(R.color.fieldcopilot_accent)
         binding = FieldcopilotDialogBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applySystemBarAndKeyboardInsets()
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -34,7 +40,9 @@ class FieldCopilotDialog : AppCompatActivity() {
             }
         })
 
-        binding.ivClose.setOnClickListener { finish() }
+        binding.ivBack.setOnClickListener {
+            if (binding.webView.canGoBack()) binding.webView.goBack() else finish()
+        }
         setupWebView()
         if (savedInstanceState == null) {
             binding.webView.loadUrl(intent.getStringExtra(EXTRA_URL).orEmpty())
@@ -80,6 +88,29 @@ class FieldCopilotDialog : AppCompatActivity() {
 
     private fun injectKeyboardScrollHelper() {
         binding.webView.evaluateJavascript(KEYBOARD_SCROLL_JS, null)
+    }
+
+    /** Keep the header below cutouts and the WebView above both nav bar and IME. */
+    private fun applySystemBarAndKeyboardInsets() {
+        val root = binding.root
+        val initialLeft = root.paddingLeft
+        val initialTop = root.paddingTop
+        val initialRight = root.paddingRight
+        val initialBottom = root.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val cutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            view.setPadding(
+                initialLeft + maxOf(systemBars.left, cutout.left),
+                initialTop + maxOf(systemBars.top, cutout.top),
+                initialRight + maxOf(systemBars.right, cutout.right),
+                initialBottom + maxOf(systemBars.bottom, ime.bottom)
+            )
+            insets
+        }
+        ViewCompat.requestApplyInsets(root)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

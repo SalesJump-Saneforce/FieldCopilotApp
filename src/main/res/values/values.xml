@@ -2,11 +2,13 @@
 <resources>
 
     <color name="fieldcopilot_accent">#1997CE</color>
+    <color name="fieldcopilot_header_subtitle">#D9F1FC</color>
     <color name="fieldcopilot_surface">#FFFFFF</color>
 
     <dimen name="fieldcopilot_fab_margin">16dp</dimen>
 
-    <string name="fieldcopilot_title">Field Copilot</string>
+    <string name="fieldcopilot_title">Ask SJ</string>
+    <string name="fieldcopilot_subtitle">SalesJump assistant</string>
     <string name="fieldcopilot_close">Close chat</string>
     <string name="fieldcopilot_back">Back</string>
 

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fieldcopilot_accent"
     android:orientation="vertical">
 
     <LinearLayout
@@ -26,22 +27,35 @@
             android:tint="@android:color/white" />
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginStart="8dp"
             android:contentDescription="@null"
-            android:src="@drawable/fieldcopilot_ic_bot"
-            android:tint="@android:color/white" />
+            android:src="@drawable/fieldcopilot_sj_ai_icon" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/fieldcopilot_title"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/fieldcopilot_title"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/fieldcopilot_subtitle"
+                android:textColor="@color/fieldcopilot_header_subtitle"
+                android:textSize="13sp" />
+        </LinearLayout>
 
     </LinearLayout>
 

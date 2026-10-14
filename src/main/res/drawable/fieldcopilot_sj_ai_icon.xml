@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+
+    <!-- Rounded square with the violet > magenta > pink gradient (135 degrees, top-left to bottom-right) -->
+    <path android:pathData="M8,0H24A8,8 0 0 1 32,8V24A8,8 0 0 1 24,32H8A8,8 0 0 1 0,24V8A8,8 0 0 1 8,0Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="32"
+                android:endY="32">
+                <item android:color="#7C3AED" android:offset="0.0" />
+                <item android:color="#C026D3" android:offset="0.5" />
+                <item android:color="#EC4899" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Thin inner white ring (30% opacity) -->
+    <path
+        android:pathData="M8,0.75H24A7.25,7.25 0 0 1 31.25,8V24A7.25,7.25 0 0 1 24,31.25H8A7.25,7.25 0 0 1 0.75,24V8A7.25,7.25 0 0 1 8,0.75Z"
+        android:strokeColor="#4DFFFFFF"
+        android:strokeWidth="1.5" />
+
+    <!-- Small sparkle, top right -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M21.25,13.75L22.1875,11.6875L24.25,10.75L22.1875,9.8125L21.25,7.75L20.3125,9.8125L18.25,10.75L20.3125,11.6875Z" />
+
+    <!-- Large sparkle, centre -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15.625,14.125L13.75,10L11.875,14.125L7.75,16L11.875,17.875L13.75,22L15.625,17.875L19.75,16Z" />
+
+    <!-- Small sparkle, bottom right -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M21.25,18.25L20.3125,20.3125L18.25,21.25L20.3125,22.1875L21.25,24.25L22.1875,22.1875L24.25,21.25L22.1875,20.3125Z" />
+
+</vector>

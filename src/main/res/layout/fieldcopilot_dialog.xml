@@ -53,8 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@string/fieldcopilot_subtitle"
-                android:textColor="@color/fieldcopilot_header_subtitle"
-                android:tint="@android:color/black"
+                android:textColor="@android:color/black"
                 android:textSize="13sp" />
         </LinearLayout>
 
